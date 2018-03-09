@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
-public class PlaneGenerator : MonoBehaviour {
-
-    private static readonly int NUMBER_CHUNKS = 5;
+public class PlaneGenerator : MonoBehaviour
+{
     // road chunk prefab
+    public Camera camera;
     public GameObject roadChunk;
     public GameObject roadChunk90;
     public GameObject grassChunk;
@@ -16,21 +17,17 @@ public class PlaneGenerator : MonoBehaviour {
     public GameObject crossTChunk180;
     public GameObject crossTChunk270;
     public GameObject crossXChunk;
-    private readonly string sourceMap = "map00.csv";
+    public String hardcodeFileMap = "";
 
     // distance between edges of the chunk.
     public float chunkLength;
-
-    // number of chunks to be activated at a time.
-    public int drawingAmount = 3;
 
     // reference to player object. it is required to manage chunks on the scene.
     [SerializeField]
     private Transform player = null;
 
     // total number of chunks that actually exist in the scene
-    [SerializeField]
-    private int numberOfChunks = NUMBER_CHUNKS;
+    private int NUMBER_OF_CHUNK = 5;
 
     // list of references to chunks in the scence
     private Queue<Transform> chunks;
@@ -40,24 +37,40 @@ public class PlaneGenerator : MonoBehaviour {
     private int indexOfCurrentChunk;
     private int currentChunkPositionZ = 0;
     private int currentChunkPositionX = 0;
-    /*private int [,] dummyMatrix = new int[,] {  { 1, 1, 1, 0, 0 }, 
-                                                { 1, 0, 1, 0, 1 }, 
-                                                { 0, 1, 1, 1, 1 },
-                                                { 0, 0, 1, 0, 1 },
-                                                { 0, 0, 0, 1, 1 },  };*/
+    private int[,] mapData;
+    private ArrayList listFileMap = new ArrayList();
+    private readonly System.Random rnd = new System.Random();
 
     private void Awake()
     {
         ReadMapFromFile();
+        InitPositionCamera();
         InitializeChunksList();
+    }
+
+    private void InitPositionCamera()
+    {
+        switch(NUMBER_OF_CHUNK)
+        {
+            case 5:
+                camera.transform.position = new Vector3(20.3f, 45, 20.2f);
+                break;
+            case 6:
+                camera.transform.position = new Vector3(23.7f, 50, 28.16f);
+                break;
+            case 7:
+                camera.transform.position = new Vector3(29.4f, 60, 35.2f);
+                break;
+        }
+      
     }
 
     private void InitializeChunksList()
     {
         chunks = new Queue<Transform>();
-        for (int i = 0; i < numberOfChunks; i++)
+        for (int i = 0; i < NUMBER_OF_CHUNK; i++)
         {
-            for (int j = 0; j < numberOfChunks; j++)
+            for (int j = 0; j < NUMBER_OF_CHUNK; j++)
             {
                 int valueCell = mapData[i,j];
                 
@@ -71,38 +84,56 @@ public class PlaneGenerator : MonoBehaviour {
             currentChunkPositionZ = 0;
         }
     }
-
-    int[,] mapData;
+    
     private int[,] ReadMapFromFile()
     {
-        using (var reader = new StreamReader(@sourceMap))
+        String fileName = GetFileMap();
+        using (var reader = new StreamReader(@fileName))
         {
-            int nRow = Int32.Parse(reader.ReadLine()[0].ToString());
-            mapData = new int[nRow, nRow];
-            for (int i = 0; i < nRow; i++)
+            NUMBER_OF_CHUNK = Int32.Parse(reader.ReadLine()[0].ToString());
+            mapData = new int[NUMBER_OF_CHUNK, NUMBER_OF_CHUNK];
+            for (int i = 0; i < NUMBER_OF_CHUNK; i++)
             {
                 var line = reader.ReadLine();
                 var values = line.Split(',');
-                for (int j = 0; j < nRow; j++)
+                for (int j = 0; j < NUMBER_OF_CHUNK; j++)
                 {
                     mapData[i, j] = Int32.Parse(values[j]);
                 }
-                
             }    
             reader.Close();
         }
         return mapData;
     }
 
+    private string GetFileMap()
+    {
+        DirectoryInfo d = new DirectoryInfo(@"./Maps");
+        FileInfo[] Files = d.GetFiles("*.csv"); //Getting Text files
+        foreach (FileInfo file in Files)
+        {
+            listFileMap.Add(file.Name);
+        }
+
+        if (hardcodeFileMap != "")
+        {
+            return hardcodeFileMap;
+        }
+        //Get random file map
+        int idx = rnd.Next(0, listFileMap.Count);
+
+        return @"./Maps/" + (String) listFileMap[idx];
+    }
+
     private GameObject GetTextureInCell(int i, int j)
     {
         int top, bottom, left, right, center;
-        Debug.Log(i + "  " + j);
+
         center = mapData[i, j];
         if (i == 0) { top = -1; } else { top = mapData[i - 1, j]; }
-        if (i == NUMBER_CHUNKS - 1) { bottom = -1; } else { bottom = mapData[i + 1, j]; }
+        if (i == NUMBER_OF_CHUNK - 1) { bottom = -1; } else { bottom = mapData[i + 1, j]; }
         if (j == 0) { left = -1; } else { left = mapData[i, j - 1]; }
-        if (j == NUMBER_CHUNKS - 1) { right = -1; } else { right = mapData[i, j + 1]; }
+        if (j == NUMBER_OF_CHUNK - 1) { right = -1; } else { right = mapData[i, j + 1]; }
 
         if(center == 0)
         {
