@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +8,12 @@ public class PlaneGenerator : MonoBehaviour {
     private static readonly int NUMBER_CHUNKS = 5;
     // road chunk prefab
     public GameObject roadChunk;
+    public GameObject roadChunk90;
     public GameObject grassChunk;
     public GameObject crossTChunk;
+    public GameObject crossTChunk90;
+    public GameObject crossTChunk180;
+    public GameObject crossTChunk270;
     public GameObject crossXChunk;
 
     // distance between edges of the chunk.
@@ -34,10 +39,10 @@ public class PlaneGenerator : MonoBehaviour {
     private int currentChunkPositionZ = 0;
     private int currentChunkPositionX = 0;
     private int [,] dummyMatrix = new int[,] {  { 1, 1, 1, 0, 0 }, 
-                                                { 0, 0, 1, 0, 0 }, 
+                                                { 1, 0, 1, 0, 1 }, 
                                                 { 0, 1, 1, 1, 1 },
-                                                { 0, 0, 1, 0, 0 },
-                                                { 0, 0, 0, 0, 0 },  };
+                                                { 0, 0, 1, 0, 1 },
+                                                { 0, 0, 0, 1, 1 },  };
 
     private void Awake()
     {
@@ -65,11 +70,11 @@ public class PlaneGenerator : MonoBehaviour {
             currentChunkPositionZ = 0;
         }
     }
-
+    
     private GameObject GetTextureInCell(int i, int j)
     {
         int top, bottom, left, right, center;
-
+        Debug.Log(i + "  " + j);
         center = dummyMatrix[i, j];
         if (i == 0) { top = -1; } else { top = dummyMatrix[i - 1, j]; }
         if (i == NUMBER_CHUNKS - 1) { bottom = -1; } else { bottom = dummyMatrix[i + 1, j]; }
@@ -83,6 +88,29 @@ public class PlaneGenerator : MonoBehaviour {
         if (center == 1 && left == 1 && right == 1 && top == 1 && bottom == 1)
         {
             return crossXChunk;
+        }
+        if ((left == 1 || right == 1) && top != 1 && bottom != 1)
+        {
+            return roadChunk;
+        }
+        if ((top == 1 || bottom == 1) && left != 1 && right != 1)
+        {          
+            return roadChunk90;
+        }
+        if (bottom != 1 && top == 1 && (left == 1 || right == 1)) {
+            return crossTChunk;
+        }
+        if (left != 1 && right == 1 && (top == 1 || bottom == 1))
+        {
+            return crossTChunk90;
+        }
+        if (bottom == 1 && top != 1 && (left == 1 || right == 1))
+        {
+            return crossTChunk180;
+        }
+        if (left == 1 && right != 1 && (top == 1 || bottom == 1))
+        {
+            return crossTChunk270;
         }
 
         return roadChunk;
