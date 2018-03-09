@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PlaneGenerator : MonoBehaviour {
@@ -15,6 +16,7 @@ public class PlaneGenerator : MonoBehaviour {
     public GameObject crossTChunk180;
     public GameObject crossTChunk270;
     public GameObject crossXChunk;
+    private readonly string sourceMap = "map00.csv";
 
     // distance between edges of the chunk.
     public float chunkLength;
@@ -38,14 +40,15 @@ public class PlaneGenerator : MonoBehaviour {
     private int indexOfCurrentChunk;
     private int currentChunkPositionZ = 0;
     private int currentChunkPositionX = 0;
-    private int [,] dummyMatrix = new int[,] {  { 1, 1, 1, 0, 0 }, 
+    /*private int [,] dummyMatrix = new int[,] {  { 1, 1, 1, 0, 0 }, 
                                                 { 1, 0, 1, 0, 1 }, 
                                                 { 0, 1, 1, 1, 1 },
                                                 { 0, 0, 1, 0, 1 },
-                                                { 0, 0, 0, 1, 1 },  };
+                                                { 0, 0, 0, 1, 1 },  };*/
 
     private void Awake()
     {
+        ReadMapFromFile();
         InitializeChunksList();
     }
 
@@ -56,30 +59,50 @@ public class PlaneGenerator : MonoBehaviour {
         {
             for (int j = 0; j < numberOfChunks; j++)
             {
-                int valueCell = dummyMatrix[i,j];
+                int valueCell = mapData[i,j];
                 
                 GameObject _chunk = Instantiate<GameObject>(GetTextureInCell(i,j));
                 _chunk.transform.position = NextChunkPosition();
                 currentChunkPositionZ += (int)chunkLength;
 
-                /*if (i != 0)
-                    _chunk.SetActive(false);*/
                 chunks.Enqueue(_chunk.transform);
             }
             currentChunkPositionX += (int)chunkLength;
             currentChunkPositionZ = 0;
         }
     }
-    
+
+    int[,] mapData;
+    private int[,] ReadMapFromFile()
+    {
+        using (var reader = new StreamReader(@sourceMap))
+        {
+            int nRow = Int32.Parse(reader.ReadLine()[0].ToString());
+            mapData = new int[nRow, nRow];
+            for (int i = 0; i < nRow; i++)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+                for (int j = 0; j < nRow; j++)
+                {
+                    mapData[i, j] = Int32.Parse(values[j]);
+                }
+                
+            }    
+            reader.Close();
+        }
+        return mapData;
+    }
+
     private GameObject GetTextureInCell(int i, int j)
     {
         int top, bottom, left, right, center;
         Debug.Log(i + "  " + j);
-        center = dummyMatrix[i, j];
-        if (i == 0) { top = -1; } else { top = dummyMatrix[i - 1, j]; }
-        if (i == NUMBER_CHUNKS - 1) { bottom = -1; } else { bottom = dummyMatrix[i + 1, j]; }
-        if (j == 0) { left = -1; } else { left = dummyMatrix[i, j - 1]; }
-        if (j == NUMBER_CHUNKS - 1) { right = -1; } else { right = dummyMatrix[i, j + 1]; }
+        center = mapData[i, j];
+        if (i == 0) { top = -1; } else { top = mapData[i - 1, j]; }
+        if (i == NUMBER_CHUNKS - 1) { bottom = -1; } else { bottom = mapData[i + 1, j]; }
+        if (j == 0) { left = -1; } else { left = mapData[i, j - 1]; }
+        if (j == NUMBER_CHUNKS - 1) { right = -1; } else { right = mapData[i, j + 1]; }
 
         if(center == 0)
         {
@@ -147,15 +170,7 @@ public class PlaneGenerator : MonoBehaviour {
         }*/
 
     }
-
-    private void SweepPreviousChunk()
-    {
-        Transform _chunk = chunks.Dequeue();
-        _chunk.gameObject.SetActive(false);
-        _chunk.position = NextChunkPosition();
-        chunks.Enqueue(_chunk);
-    }
-
+    
     private Vector3 NextChunkPosition()
     {
         float _positionZ = currentChunkPositionZ;
