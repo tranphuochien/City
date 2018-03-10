@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using City;
+using UnityEditor;
 
 namespace UnityStandardAssets.Vehicles.Car
 {
@@ -13,11 +14,13 @@ namespace UnityStandardAssets.Vehicles.Car
         int direction = 0; // 1 : left | 2 : right | 3: top | 4 : bottom
         Vector2 currentPosition = new Vector2(0,0);
         Vector2 prevPosition = new Vector2(0, 0);
+        private Vector3 initPos;
         private void Awake()
         {
             mCity = CityController.GetInstance();
             // get the car controller
             m_Car = GetComponent<CarController>();
+            initPos = transform.position;
         }
 
 
@@ -56,5 +59,23 @@ namespace UnityStandardAssets.Vehicles.Car
                 Debug.Log("run right");
             }
         }
+
+        private void checkOutMapAndRestore()
+        {
+            float posX = transform.position.x;
+            float posZ = transform.position.z;
+
+            Vector2 currentPos = mCity.GetPositionOnMap(posX, posZ);
+
+            if (currentPos.x < 0 || currentPos.x >= mCity.GetNumberOfChunk() - 1 || currentPos.y < 0 || currentPos.y >= mCity.GetNumberOfChunk() - 1)
+            {
+                Destroy(this.gameObject);
+                UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                // Modify the clone to your heart's content
+                clone.transform.position = initPos;
+            }
+        }
     }
+
 }

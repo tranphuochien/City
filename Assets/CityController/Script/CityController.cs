@@ -9,7 +9,7 @@ namespace City
     public class CityController : ICityController
     {
 
-        public String hardcodeFileMap = "";
+        public String hardcodeFileMap = "./Maps/map05.csv";
 
         // total number of chunks that actually exist in the scene
         private int NUMBER_OF_CHUNK = 5;
