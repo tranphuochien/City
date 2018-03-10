@@ -27,7 +27,8 @@ public class PlaneGenerator : MonoBehaviour
     private Transform player = null;
 
     // total number of chunks that actually exist in the scene
-    private int NUMBER_OF_CHUNK = 5;
+    private int NUMBER_OF_CHUNK_HEIGHT = 5;
+    private int NUMBER_OF_CHUNK_WIDTH = 5;
     private int[,] mapData;
     // list of references to chunks in the scence
     private Queue<Transform> chunks;
@@ -48,12 +49,13 @@ public class PlaneGenerator : MonoBehaviour
     {
         cityController = CityController.GetInstance();
         mapData = cityController.GetMapCityData();
-        NUMBER_OF_CHUNK = cityController.GetNumberOfChunk();
+        NUMBER_OF_CHUNK_WIDTH = cityController.GetNumberOfChunkWidth();
+        NUMBER_OF_CHUNK_HEIGHT = cityController.GetNumberOfChunkHeight();
     }
 
     private void InitPositionCamera()
     {
-        switch(NUMBER_OF_CHUNK)
+        switch(NUMBER_OF_CHUNK_HEIGHT)
         {
             case 5:
                 mCamera.transform.position = new Vector3(20.3f, 45, 20.2f);
@@ -62,7 +64,7 @@ public class PlaneGenerator : MonoBehaviour
                 mCamera.transform.position = new Vector3(23.7f, 50, 28.16f);
                 break;
             case 7:
-                mCamera.transform.position = new Vector3(29.4f, 60, 35.2f);
+                mCamera.transform.position = new Vector3(29.4f, 60, 42f);
                 break;
         }
       
@@ -71,9 +73,9 @@ public class PlaneGenerator : MonoBehaviour
     private void InitializeChunksList()
     {
         chunks = new Queue<Transform>();
-        for (int i = 0; i < NUMBER_OF_CHUNK; i++)
+        for (int i = 0; i < NUMBER_OF_CHUNK_HEIGHT; i++)
         {
-            for (int j = 0; j < NUMBER_OF_CHUNK; j++)
+            for (int j = 0; j < NUMBER_OF_CHUNK_WIDTH; j++)
             {
                 int valueCell = mapData[i,j];
                 
@@ -94,9 +96,9 @@ public class PlaneGenerator : MonoBehaviour
 
         center = mapData[i, j];
         if (i == 0) { top = -1; } else { top = mapData[i - 1, j]; }
-        if (i == NUMBER_OF_CHUNK - 1) { bottom = -1; } else { bottom = mapData[i + 1, j]; }
+        if (i == NUMBER_OF_CHUNK_HEIGHT - 1) { bottom = -1; } else { bottom = mapData[i + 1, j]; }
         if (j == 0) { left = -1; } else { left = mapData[i, j - 1]; }
-        if (j == NUMBER_OF_CHUNK - 1) { right = -1; } else { right = mapData[i, j + 1]; }
+        if (j == NUMBER_OF_CHUNK_WIDTH - 1) { right = -1; } else { right = mapData[i, j + 1]; }
 
         if(center == 0)
         {
