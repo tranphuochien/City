@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class CityController : MonoBehaviour, ICityController
+public class CityController : ICityController
 {
 
     public String hardcodeFileMap = "";
@@ -14,10 +14,22 @@ public class CityController : MonoBehaviour, ICityController
     private int[,] mapData;
     private ArrayList listFileMap = new ArrayList();
     private readonly System.Random rnd = new System.Random();
+    
 
-    private void Awake()
+    private static CityController _instance = null;
+
+    private CityController()
     {
         ReadMapFromFile();
+    }
+
+    public static CityController GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new CityController();
+        }
+        return _instance;
     }
 
     private int[,] ReadMapFromFile()

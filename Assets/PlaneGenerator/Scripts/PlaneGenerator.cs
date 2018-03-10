@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlaneGenerator : MonoBehaviour
 {
     public Camera mCamera;
-    public CityController cityController;
+    private CityController cityController;
     public GameObject roadChunk;
     public GameObject roadChunk90;
     public GameObject grassChunk;
@@ -38,7 +38,6 @@ public class PlaneGenerator : MonoBehaviour
     
     private void Awake()
     {
-        //ReadMapFromFile();
         InitData();
         InitPositionCamera();
         InitializeChunksList();
@@ -46,6 +45,7 @@ public class PlaneGenerator : MonoBehaviour
 
     private void InitData()
     {
+        cityController = CityController.GetInstance();
         mapData = cityController.GetMapCityData();
         NUMBER_OF_CHUNK = cityController.GetNumberOfChunk();
     }
