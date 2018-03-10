@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class PlaneGenerator : MonoBehaviour
 {
-    // road chunk prefab
-    public Camera camera;
+    public Camera mCamera;
+    public CityController cityController;
     public GameObject roadChunk;
     public GameObject roadChunk90;
     public GameObject grassChunk;
@@ -17,7 +17,6 @@ public class PlaneGenerator : MonoBehaviour
     public GameObject crossTChunk180;
     public GameObject crossTChunk270;
     public GameObject crossXChunk;
-    public String hardcodeFileMap = "";
 
     // distance between edges of the chunk.
     public float chunkLength;
@@ -28,24 +27,27 @@ public class PlaneGenerator : MonoBehaviour
 
     // total number of chunks that actually exist in the scene
     private int NUMBER_OF_CHUNK = 5;
-
+    private int[,] mapData;
     // list of references to chunks in the scence
     private Queue<Transform> chunks;
-
     // reference to chunk that the player is on
     private Transform currentChunk;
     private int indexOfCurrentChunk;
     private int currentChunkPositionZ = 0;
     private int currentChunkPositionX = 0;
-    private int[,] mapData;
-    private ArrayList listFileMap = new ArrayList();
-    private readonly System.Random rnd = new System.Random();
-
+    
     private void Awake()
     {
-        ReadMapFromFile();
+        //ReadMapFromFile();
+        InitData();
         InitPositionCamera();
         InitializeChunksList();
+    }
+
+    private void InitData()
+    {
+        mapData = cityController.GetMapCityData();
+        NUMBER_OF_CHUNK = cityController.GetNumberOfChunk();
     }
 
     private void InitPositionCamera()
@@ -53,13 +55,13 @@ public class PlaneGenerator : MonoBehaviour
         switch(NUMBER_OF_CHUNK)
         {
             case 5:
-                camera.transform.position = new Vector3(20.3f, 45, 20.2f);
+                mCamera.transform.position = new Vector3(20.3f, 45, 20.2f);
                 break;
             case 6:
-                camera.transform.position = new Vector3(23.7f, 50, 28.16f);
+                mCamera.transform.position = new Vector3(23.7f, 50, 28.16f);
                 break;
             case 7:
-                camera.transform.position = new Vector3(29.4f, 60, 35.2f);
+                mCamera.transform.position = new Vector3(29.4f, 60, 35.2f);
                 break;
         }
       
@@ -83,46 +85,6 @@ public class PlaneGenerator : MonoBehaviour
             currentChunkPositionX += (int)chunkLength;
             currentChunkPositionZ = 0;
         }
-    }
-    
-    private int[,] ReadMapFromFile()
-    {
-        String fileName = GetFileMap();
-        using (var reader = new StreamReader(@fileName))
-        {
-            NUMBER_OF_CHUNK = Int32.Parse(reader.ReadLine()[0].ToString());
-            mapData = new int[NUMBER_OF_CHUNK, NUMBER_OF_CHUNK];
-            for (int i = 0; i < NUMBER_OF_CHUNK; i++)
-            {
-                var line = reader.ReadLine();
-                var values = line.Split(',');
-                for (int j = 0; j < NUMBER_OF_CHUNK; j++)
-                {
-                    mapData[i, j] = Int32.Parse(values[j]);
-                }
-            }    
-            reader.Close();
-        }
-        return mapData;
-    }
-
-    private string GetFileMap()
-    {
-        DirectoryInfo d = new DirectoryInfo(@"./Maps");
-        FileInfo[] Files = d.GetFiles("*.csv"); //Getting Text files
-        foreach (FileInfo file in Files)
-        {
-            listFileMap.Add(file.Name);
-        }
-
-        if (hardcodeFileMap != "")
-        {
-            return hardcodeFileMap;
-        }
-        //Get random file map
-        int idx = rnd.Next(0, listFileMap.Count);
-
-        return @"./Maps/" + (String) listFileMap[idx];
     }
 
     private GameObject GetTextureInCell(int i, int j)
