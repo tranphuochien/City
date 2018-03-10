@@ -97,5 +97,10 @@ namespace City
             }
             return mapData[i, j];
         }
+
+        public Vector2 GetPositionOnMap(float x, float z)
+        {
+            return new Vector2((int)(x / 10), (int)(z / 10));
+        }
     }
 }

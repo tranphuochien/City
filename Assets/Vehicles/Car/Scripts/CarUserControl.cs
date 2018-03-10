@@ -10,7 +10,9 @@ namespace UnityStandardAssets.Vehicles.Car
     {
         private CarController m_Car; // the car controller we want to use
         private CityController mCity;
-
+        int direction = 0; // 1 : left | 2 : right | 3: top | 4 : bottom
+        Vector2 currentPosition = new Vector2(0,0);
+        Vector2 prevPosition = new Vector2(0, 0);
         private void Awake()
         {
             mCity = CityController.GetInstance();
@@ -27,10 +29,32 @@ namespace UnityStandardAssets.Vehicles.Car
             float v = CrossPlatformInputManager.GetAxis("Vertical");
 #if !MOBILE_INPUT
             float handbrake = CrossPlatformInputManager.GetAxis("Jump");
-            m_Car.Move(h, v, v, handbrake);
+            //m_Car.Move(h, v, v, handbrake);
+
+            TrackDirection();
+            m_Car.Move(0, 1, 1, 0);
 #else
             m_Car.Move(h, v, v, 0f);
 #endif
+        }
+
+        private void TrackDirection()
+        {
+            float posX = transform.position.x;
+            float posZ = transform.position.z;
+
+            currentPosition = mCity.GetPositionOnMap(posX, posZ);
+            Debug.Log(currentPosition.x + "  " + currentPosition.y);
+            if (currentPosition.x == prevPosition.x && currentPosition.y == prevPosition.y)
+            {
+                return;
+            }
+            if (currentPosition - prevPosition == new Vector2(0,1))
+            {
+                prevPosition = currentPosition;
+                direction = 2;
+                Debug.Log("run right");
+            }
         }
     }
 }
