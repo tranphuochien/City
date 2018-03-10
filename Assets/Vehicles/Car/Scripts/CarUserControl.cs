@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using City;
 
 namespace UnityStandardAssets.Vehicles.Car
 {
@@ -8,10 +9,11 @@ namespace UnityStandardAssets.Vehicles.Car
     public class CarUserControl : MonoBehaviour
     {
         private CarController m_Car; // the car controller we want to use
-
+        private CityController mCity;
 
         private void Awake()
         {
+            mCity = CityController.GetInstance();
             // get the car controller
             m_Car = GetComponent<CarController>();
         }
@@ -19,6 +21,7 @@ namespace UnityStandardAssets.Vehicles.Car
 
         private void FixedUpdate()
         {
+            Debug.Log(mCity.GetDataIndexOf(2, 2));
             // pass the input to the car!
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
