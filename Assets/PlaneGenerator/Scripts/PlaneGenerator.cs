@@ -42,6 +42,77 @@ public class PlaneGenerator : MonoBehaviour
         InitData();
         InitPositionCamera();
         InitializeChunksList();
+        InitCars();
+    }
+
+    private void InitCars()
+    {
+        int rowNum = mapData.GetLength(0);
+        int colNum = mapData.GetLength(1);
+
+        for (int i = 0; i < colNum; i++)
+        {
+            if (mapData[0,i] == 1)
+            {
+                if (i == 0)
+                {
+                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    // Modify the clone to your heart's content
+                    clone.transform.position = new Vector3(0, 0, 0);
+                } else if ((i == colNum - 1 || mapData[0, i + 1] == 0) && mapData[1, i] == 1)
+                {
+                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    // Modify the clone to your heart's content
+                    clone.transform.position = new Vector3(0, 0, i * 10);
+                    clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, 90, 0);
+                } else if (checkTPlane(0, i))
+                {
+                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    // Modify the clone to your heart's content
+                    clone.transform.position = new Vector3(0, 0, i * 10);
+                    clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, 90, 0);
+                }
+            }
+        }
+
+        for (int i = 1; i < rowNum; i++)
+        {
+            if (mapData[i, 0] == 1)
+            {
+                if ((i == rowNum - 1 || mapData[i + 1, 0] == 0) && mapData[i, 1] == 1)
+                {
+                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    // Modify the clone to your heart's content
+                    clone.transform.position = new Vector3(i * 10, 0, 0);
+                }
+            }
+        }
+    }
+
+    private bool checkTPlane(int x, int y)
+    {
+        int ways = 0;
+        if (mapData[x,y + 1] == 1)
+        {
+            ways++;
+        }
+        if (mapData[x + 1, y] == 1)
+        {
+            ways++;
+        }
+        if (mapData[x, y - 1] == 1)
+        {
+            ways++;
+        }
+        if (ways == 3)
+        {
+            return true;
+        }
+        return false;
     }
 
     private void InitData()
