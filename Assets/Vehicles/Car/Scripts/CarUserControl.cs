@@ -59,7 +59,7 @@ namespace UnityStandardAssets.Vehicles.Car
 
             Vector2 currentPos = mCity.GetPositionOnMap(posX, posZ);
 
-            if (currentPos.x < 0 || currentPos.x >= mCity.GetNumberOfChunkHeight() - 1 || currentPos.y < 0 || currentPos.y >= mCity.GetNumberOfChunkWidth() - 1)
+            if (currentPos.x < 0 || currentPos.x > mCity.GetNumberOfChunkHeight() - 1 || currentPos.y < 0 || currentPos.y > mCity.GetNumberOfChunkWidth() - 1)
             {
                 Destroy(this.gameObject);
                 UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));

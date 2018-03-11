@@ -43,7 +43,6 @@ public class PlaneGenerator : MonoBehaviour
         InitData();
         InitPositionCamera();
         InitializeChunksList();
-        InitCars();
     }
 
     private void InitCars()
@@ -53,27 +52,21 @@ public class PlaneGenerator : MonoBehaviour
 
         for (int i = 0; i < colNum; i++)
         {
-            if (mapData[0,i] == 1)
+            if (mapData[0, i] == 1)
             {
-                if (i == 0)
+                if (i == 0 && mapData[0, 1] == 1)
                 {
                     UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
                     GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
                     // Modify the clone to your heart's content
-                    clone.transform.position = new Vector3(0, 0, 0);
-                } else if ((i == colNum - 1 || mapData[0, i + 1] == 0) && mapData[1, i] == 1)
+                    clone.transform.position = new Vector3(-1f, 0, -1f);
+                }
+                else if (mapData[1, i] == 1)
                 {
                     UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
                     GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
                     // Modify the clone to your heart's content
-                    clone.transform.position = new Vector3(0, 0, i * 10);
-                    clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, 90, 0);
-                } else if (checkTPlane(0, i))
-                {
-                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-                    // Modify the clone to your heart's content
-                    clone.transform.position = new Vector3(0, 0, i * 10);
+                    clone.transform.position = new Vector3(-1f, 0, i * 10 + 1f);
                     clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, 90, 0);
                 }
             }
@@ -83,37 +76,30 @@ public class PlaneGenerator : MonoBehaviour
         {
             if (mapData[i, 0] == 1)
             {
-                if ((i == rowNum - 1 || mapData[i + 1, 0] == 0) && mapData[i, 1] == 1)
+                if (mapData[i, 1] == 1)
                 {
                     UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
                     GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
                     // Modify the clone to your heart's content
-                    clone.transform.position = new Vector3(i * 10, 0, 0);
+                    clone.transform.position = new Vector3(i * 10 - 1f, 0, -1f);
                 }
             }
         }
-    }
 
-    private bool checkTPlane(int x, int y)
-    {
-        int ways = 0;
-        if (mapData[x,y + 1] == 1)
+        for (int i = 1; i < colNum; i++)
         {
-            ways++;
+            if (mapData[rowNum - 1, i] == 1)
+            {
+                if (mapData[rowNum - 2, i] == 1)
+                {
+                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
+                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    // Modify the clone to your heart's content
+                    clone.transform.position = new Vector3((rowNum - 1) * 10 + 1f, 0, i * 10 - 1f);
+                    clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, -90, 0);
+                }
+            }
         }
-        if (mapData[x + 1, y] == 1)
-        {
-            ways++;
-        }
-        if (mapData[x, y - 1] == 1)
-        {
-            ways++;
-        }
-        if (ways == 3)
-        {
-            return true;
-        }
-        return false;
     }
 
     private void InitData()
@@ -208,7 +194,7 @@ public class PlaneGenerator : MonoBehaviour
 
     private void Start()
     {
-
+        InitCars();
     }
 
     private void FixedUpdate()
