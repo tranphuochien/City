@@ -9,10 +9,11 @@ namespace City
     public class CityController : ICityController
     {
 
-        public String hardcodeFileMap = "";
+        public String hardcodeFileMap = "./Maps/map05.csv";
 
         // total number of chunks that actually exist in the scene
-        private int NUMBER_OF_CHUNK = 5;
+        private int NUMBER_OF_CHUNK_HEIGHT = 5;
+        private int NUMBER_OF_CHUNK_WIDTH = 5;
         private int[,] mapData;
         private ArrayList listFileMap = new ArrayList();
         private readonly System.Random rnd = new System.Random();
@@ -39,13 +40,17 @@ namespace City
             String fileName = GetFileMap();
             using (var reader = new StreamReader(@fileName))
             {
-                NUMBER_OF_CHUNK = Int32.Parse(reader.ReadLine()[0].ToString());
-                mapData = new int[NUMBER_OF_CHUNK, NUMBER_OF_CHUNK];
-                for (int i = 0; i < NUMBER_OF_CHUNK; i++)
+                var lineFirst = reader.ReadLine();
+                var valuesFirst = lineFirst.Split(',');
+
+                NUMBER_OF_CHUNK_HEIGHT = Int32.Parse(valuesFirst[0]);
+                NUMBER_OF_CHUNK_WIDTH = Int32.Parse(valuesFirst[1]);
+                mapData = new int[NUMBER_OF_CHUNK_HEIGHT, NUMBER_OF_CHUNK_WIDTH];
+                for (int i = 0; i < NUMBER_OF_CHUNK_HEIGHT; i++)
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(',');
-                    for (int j = 0; j < NUMBER_OF_CHUNK; j++)
+                    for (int j = 0; j < NUMBER_OF_CHUNK_WIDTH; j++)
                     {
                         mapData[i, j] = Int32.Parse(values[j]);
                     }
@@ -79,9 +84,14 @@ namespace City
             return mapData;
         }
 
-        public int GetNumberOfChunk()
+        public int GetNumberOfChunkHeight()
         {
-            return NUMBER_OF_CHUNK;
+            return NUMBER_OF_CHUNK_HEIGHT;
+        }
+
+        public int GetNumberOfChunkWidth()
+        {
+            return NUMBER_OF_CHUNK_WIDTH;
         }
 
         public System.Random GetRandomSystem()
@@ -91,7 +101,7 @@ namespace City
 
         public int GetDataIndexOf(int i, int j)
         {
-            if (i > NUMBER_OF_CHUNK || j > NUMBER_OF_CHUNK)
+            if (i > NUMBER_OF_CHUNK_HEIGHT || j > NUMBER_OF_CHUNK_WIDTH)
             {
                 return -1;
             }

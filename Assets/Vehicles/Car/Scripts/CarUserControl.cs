@@ -21,7 +21,6 @@ namespace UnityStandardAssets.Vehicles.Car
             mCity = CityController.GetInstance();
             // get the car controller
             m_Car = GetComponent<CarController>();
-            
         }
 
         private void Start()
@@ -60,7 +59,7 @@ namespace UnityStandardAssets.Vehicles.Car
 
             Vector2 currentPos = mCity.GetPositionOnMap(posX, posZ);
 
-            if (currentPos.x < 0 || currentPos.x >= mCity.GetNumberOfChunk() - 1 || currentPos.y < 0 || currentPos.y >= mCity.GetNumberOfChunk() - 1)
+            if (currentPos.x < 0 || currentPos.x >= mCity.GetNumberOfChunkHeight() - 1 || currentPos.y < 0 || currentPos.y >= mCity.GetNumberOfChunkWidth() - 1)
             {
                 Destroy(this.gameObject);
                 UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
@@ -90,4 +89,5 @@ namespace UnityStandardAssets.Vehicles.Car
             }
         }
     }
+
 }
