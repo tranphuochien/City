@@ -110,7 +110,11 @@ namespace City
 
         public Vector2 GetPositionOnMap(float x, float z)
         {
-            return new Vector2((int)(x / 10), (int)(z / 10));
+            x = (Math.Abs(x) / 10);
+            z = (Math.Abs(z) / 10);
+            x = (float) Math.Round(x);
+            z = (float)Math.Round(z);
+            return new Vector2(x, z);
         }
     }
 }

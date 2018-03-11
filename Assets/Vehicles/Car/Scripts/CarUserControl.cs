@@ -11,16 +11,23 @@ namespace UnityStandardAssets.Vehicles.Car
     {
         private CarController m_Car; // the car controller we want to use
         private CityController mCity;
+        private int[,] mapData;
         int direction = 0; // 1 : left | 2 : right | 3: top | 4 : bottom
         Vector2 currentPosition = new Vector2(0,0);
         Vector2 prevPosition = new Vector2(0, 0);
+        private int stoppingCount = 0;
         private Vector3 initPos;
+        private Vector3 stoppingVelocity = new Vector3(0, 0, 0);
         private Quaternion initRotation;
+        private Rigidbody rigidbody;
+
         private void Awake()
         {
             mCity = CityController.GetInstance();
             // get the car controller
             m_Car = GetComponent<CarController>();
+            mapData = mCity.GetMapCityData();
+            rigidbody = GetComponent<Rigidbody>();
         }
 
         private void Start()
@@ -59,7 +66,8 @@ namespace UnityStandardAssets.Vehicles.Car
 
             Vector2 currentPos = mCity.GetPositionOnMap(posX, posZ);
 
-            if (currentPos.x < 0 || currentPos.x > mCity.GetNumberOfChunkHeight() - 1 || currentPos.y < 0 || currentPos.y > mCity.GetNumberOfChunkWidth() - 1)
+            if (currentPos.x < 0 || currentPos.x > mCity.GetNumberOfChunkHeight() - 1 || currentPos.y < 0 || currentPos.y > mCity.GetNumberOfChunkWidth() - 1 || 
+                isNotRoad(currentPos) || isStopping())
             {
                 Destroy(this.gameObject);
                 UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
@@ -68,6 +76,36 @@ namespace UnityStandardAssets.Vehicles.Car
                 clone.transform.position = initPos;
                 clone.transform.rotation = initRotation;
             }
+        }
+
+        private bool isNotRoad(Vector2 currentPos)
+        {
+            if (initRotation.eulerAngles.y >-2 && initRotation.eulerAngles.y < 2 && currentPos.y < mCity.GetNumberOfChunkWidth() - 1 && mapData[(int) currentPos.x, (int) currentPos.y + 1] != 1)
+            {
+                return true;
+            }
+
+            if (initRotation.eulerAngles.y > 88 && initRotation.eulerAngles.y < 92 && currentPos.x < mCity.GetNumberOfChunkHeight() - 1 && mapData[(int) currentPos.x + 1, (int) currentPos.y] != 1)
+            {
+                return true;
+            }
+
+            if (initRotation.eulerAngles.y > -92 && initRotation.eulerAngles.y < -88  && currentPos.x > 1 && mapData[(int)currentPos.x - 1, (int)currentPos.y] != 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool isStopping()
+        {
+            if (rigidbody.velocity.magnitude <= 0.001f)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void TrackDirection()

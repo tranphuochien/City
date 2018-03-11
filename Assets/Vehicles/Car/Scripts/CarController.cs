@@ -196,7 +196,7 @@ namespace UnityStandardAssets.Vehicles.Car
         private void ApplyDrive(float accel, float footbrake)
         {
 
-            float thrustTorque = 50;
+            float thrustTorque = 200;
             switch (m_CarDriveType)
             {
                 case CarDriveType.FourWheelDrive:
