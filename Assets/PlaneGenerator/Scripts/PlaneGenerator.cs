@@ -116,20 +116,65 @@ public class PlaneGenerator : MonoBehaviour
         {          
             return roadChunk90;
         }
-        if (bottom != 1 && top == 1 && (left == 1 || right == 1)) {
-            return crossTChunk;
-        }
-        if (left != 1 && right == 1 && (top == 1 || bottom == 1))
+
+
+        if (left >= 0 && right >= 0 && top >= 0 && bottom >= 0)
         {
-            return crossTChunk90;
-        }
-        if (bottom == 1 && top != 1 && (left == 1 || right == 1))
+            if (bottom != 1 && top == 1 && left == 1 || right == 1)
+            {
+                return crossTChunk;
+            }
+            if (left != 1 && right == 1 && top == 1 || bottom == 1)
+            {
+                return crossTChunk90;
+            }
+            if (bottom == 1 && top != 1 && left == 1 || right == 1)
+            {
+                return crossTChunk180;
+            } 
+
+            if (left == 1 && right != 1 && top == 1 || bottom == 1)
+            {
+                return crossTChunk270;
+            }
+        } else
         {
-            return crossTChunk180;
-        }
-        if (left == 1 && right != 1 && (top == 1 || bottom == 1))
-        {
-            return crossTChunk270;
+            if (bottom != 1 && top == 1 && (
+                (left == 1 && right == -1) || (left == -1 && right == 1)))
+            {
+                return crossTChunk;
+            }
+            if (left == 1 && right == 1 && top == 1 && bottom == -1)
+            {
+                return crossTChunk;
+            }
+            if (left != 1 && right == 1 && (
+                (top == 1 && bottom == -1) || (top == -1 && bottom == 1)))
+            {
+                return crossTChunk90;
+            }
+            if (top == 1 && bottom == 1 && right == 1 && left == -1)
+            {
+                return crossTChunk90;
+            }
+            if (bottom == 1 && top != 1 && (
+                (left == 1 && right == -1) || (left == -1 && right == 1)))
+            {
+                return crossTChunk180;
+            }
+            if (left == 1 && right == 1 && top == -1 && bottom == 1)
+            {
+                return crossTChunk180;
+            }
+            if (left == 1 && right != 1 && (
+                (top == -1 && bottom == 1) || (top == 1 && bottom == -1)))
+            {
+                return crossTChunk270;
+            }
+            if (top == 1 && bottom == 1 && left == 1 && right == 0)
+            {
+                return crossTChunk270;
+            }
         }
 
         return roadChunk;
