@@ -123,6 +123,9 @@ public class PlaneGenerator : MonoBehaviour
             case 7:
                 mCamera.transform.position = new Vector3(29.4f, 60, 42f);
                 break;
+            case 12:
+                mCamera.transform.position = new Vector3(55f, 100, 75f);
+                break;
         }
       
     }
