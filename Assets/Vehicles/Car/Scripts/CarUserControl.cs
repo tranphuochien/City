@@ -70,8 +70,7 @@ namespace UnityStandardAssets.Vehicles.Car
                 isNotRoad(currentPos) || isStopping())
             {
                 Destroy(this.gameObject);
-                UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                GameObject clone = (GameObject)Instantiate(Resources.Load("Car"));
                 // Modify the clone to your heart's content
                 clone.transform.position = initPos;
                 clone.transform.rotation = initRotation;

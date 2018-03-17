@@ -56,15 +56,13 @@ public class PlaneGenerator : MonoBehaviour
             {
                 if (i == 0 && mapData[0, 1] == 1)
                 {
-                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    GameObject clone = (GameObject)Instantiate(Resources.Load("Car"));
                     // Modify the clone to your heart's content
                     clone.transform.position = new Vector3(-1f, 1, -1f);
                 }
                 else if (mapData[1, i] == 1)
                 {
-                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    GameObject clone = (GameObject)Instantiate(Resources.Load("Car"));
                     // Modify the clone to your heart's content
                     clone.transform.position = new Vector3(-1f, 1, i * 10 + 1f);
                     clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, 90, 0);
@@ -78,8 +76,7 @@ public class PlaneGenerator : MonoBehaviour
             {
                 if (mapData[i, 1] == 1)
                 {
-                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    GameObject clone = (GameObject)Instantiate(Resources.Load("Car"));
                     // Modify the clone to your heart's content
                     clone.transform.position = new Vector3(i * 10 - 1f, 0, -1f);
                 }
@@ -92,8 +89,7 @@ public class PlaneGenerator : MonoBehaviour
             {
                 if (mapData[rowNum - 2, i] == 1)
                 {
-                    UnityEngine.Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Vehicles/Car/Prefabs/Car.prefab", typeof(GameObject));
-                    GameObject clone = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    GameObject clone = (GameObject)Instantiate(Resources.Load("Car"));
                     // Modify the clone to your heart's content
                     clone.transform.position = new Vector3((rowNum - 1) * 10 + 1f, 1, i * 10 - 1f);
                     clone.transform.rotation = clone.transform.rotation * Quaternion.Euler(0, -90, 0);
@@ -124,7 +120,7 @@ public class PlaneGenerator : MonoBehaviour
                 mCamera.transform.position = new Vector3(29.4f, 60, 42f);
                 break;
             case 12:
-                mCamera.transform.position = new Vector3(55f, 100, 75f);
+                mCamera.transform.position = new Vector3(55f, 110, 75f);
                 break;
         }
       
